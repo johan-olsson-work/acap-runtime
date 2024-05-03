@@ -105,7 +105,7 @@ RUN <<EOF
         -DgRPC_BUILD_TESTS=OFF \
         -DgRPC_SSL_PROVIDER=package \
         ../..
-    make -j4 install
+    make -j8 install
 EOF
 
 # return to build dir
@@ -125,7 +125,7 @@ RUN <<EOF
     cd openssl-1.1.1l/build
     rm -rf ../doc
     ../Configure linux-armv4 no-asm --prefix=$TARGETSYSROOT/usr
-    make CC="$CC_SETTING"
+    make -j8 CC="$CC_SETTING"
     make install
 EOF
 
@@ -150,7 +150,7 @@ RUN <<EOF
         -DgRPC_SSL_PROVIDER=package \
         -DCMAKE_BUILD_TYPE=Release \
         ../..
-    make -j4 install/strip
+    make -j8 install/strip
     cp -r /opt/grpc/third_party/googletest/googletest/include/gtest \
         "$SDKTARGETSYSROOT"/usr/include
 EOF
