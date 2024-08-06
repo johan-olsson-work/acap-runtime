@@ -5,8 +5,8 @@ ARG REPO=axisecp
 ARG VERSION=1.7
 ARG UBUNTU_VERSION=22.04
 
-FROM arm64v8/ubuntu:${UBUNTU_VERSION} as containerized_aarch64
-FROM arm32v7/ubuntu:${UBUNTU_VERSION} as containerized_armv7hf
+FROM arm64v8/ubuntu:${UBUNTU_VERSION} AS containerized_aarch64
+FROM arm32v7/ubuntu:${UBUNTU_VERSION} AS containerized_armv7hf
 
 FROM ${REPO}/acap-native-sdk:${VERSION}-${ARCH}-ubuntu${UBUNTU_VERSION} AS acap-native-sdk
 FROM acap-native-sdk AS build-image
@@ -214,7 +214,7 @@ EOF
 
 # Copy out eap to an installation image
 # Use this to install ACAP Runtime as an ACAP on a device
-FROM acap-native-sdk as runtime-base
+FROM acap-native-sdk AS runtime-base
 
 WORKDIR /opt/app
 COPY --from=build /opt/app/*.eap ./
