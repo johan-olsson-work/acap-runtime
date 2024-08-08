@@ -171,7 +171,7 @@ jobs:
           manifest_file: ./manifest-${{ matrix.arch }}.json
           append: ${{ steps.manifest-settings.outputs.append_sha }}
           value: ${{ steps.manifest-settings.outputs.version_value }}
-      - name: Build and push base image
+      - name: Build eap file
         uses: ./.github/actions/docker-build-push-action
         with:
           dockerfile: Dockerfile
@@ -187,7 +187,7 @@ jobs:
         id: get_eap_file_name
         if: ${{ env.EVENT_TYPE }}
         run: |
-          export EAP_FILE=$(find .build -type f -name "*.eap" -printf "%f\n")
+          export EAP_FILE=$(find build -type f -name "*.eap" -printf "%f\n")
           delimiter="$(openssl rand -hex 8)"
           echo "EAP_FILE<<${delimiter}" >> ${GITHUB_ENV}
           echo "${EAP_FILE}" >> ${GITHUB_ENV}

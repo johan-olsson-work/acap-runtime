@@ -188,16 +188,16 @@ RUN <<EOF
     . /opt/axis/acapsdk/environment-setup*
     if [ -n "$DEBUG" ]; then
         printf "Building debug\n"
-        CXXFLAGS="$CXXFLAGS -O0 -ggdb "$EXTRA_FLAGS"" \
-        acap-build . -m $MANIFEST
+        CXXFLAGS="$CXXFLAGS -O0 -ggdb $EXTRA_FLAGS" \
+        acap-build . -m "$MANIFEST"
     elif [ -n "$TEST" ]; then
         printf "Building test\n"
-        CXXFLAGS="$CXXFLAGS -g0 "$EXTRA_FLAGS" -DTEST" \
+        CXXFLAGS="$CXXFLAGS -g0 $EXTRA_FLAGS -DTEST" \
         acap-build . -m manifest-test.json -a 'testdata/*'
     else
         printf "Building app\n"
-        CXXFLAGS="$CXXFLAGS -g0 "$EXTRA_FLAGS"" \
-        acap-build . -m $MANIFEST
+        CXXFLAGS="$CXXFLAGS -g0 $EXTRA_FLAGS" \
+        acap-build . -m "$MANIFEST"
     fi
 EOF
 
