@@ -179,14 +179,14 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             ARCH=${{ matrix.arch }}
-          target: runtime-base
+          target: binaries
           push: false
           load: true
+          outputs: "type=local,dest=build"
       - name: Set name of EAP-file
         id: get_eap_file_name
         if: ${{ env.EVENT_TYPE }}
         run: |
-          docker cp $(docker create "${{ steps.meta.outputs.full_name }}"):/opt/app .build
           export EAP_FILE=$(find .build -type f -name "*.eap" -printf "%f\n")
           delimiter="$(openssl rand -hex 8)"
           echo "EAP_FILE<<${delimiter}" >> ${GITHUB_ENV}

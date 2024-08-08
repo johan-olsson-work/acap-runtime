@@ -125,7 +125,7 @@ RUN <<EOF
     cd openssl-1.1.1l/build
     rm -rf ../doc
     ../Configure linux-armv4 no-asm --prefix=$TARGETSYSROOT/usr
-    make CC=$CC_SETTING
+    make CC="$CC_SETTING"
     make install
 EOF
 
@@ -143,7 +143,7 @@ RUN <<EOF
     . /opt/axis/acapsdk/environment-setup*
     CXXFLAGS="$CXXFLAGS -g0" cmake \
         -DCMAKE_SYSTEM_NAME=Linux \
-        -DCMAKE_SYSTEM_PROCESSOR=$SYSTEM_PROCESSOR_ARCH \
+        -DCMAKE_SYSTEM_PROCESSOR="$SYSTEM_PROCESSOR_ARCH" \
         -DCMAKE_INSTALL_PREFIX="$SDKTARGETSYSROOT"/usr \
         -DCMAKE_FIND_ROOT_PATH="$SDKTARGETSYSROOT"/usr \
         -DgRPC_INSTALL=ON \
@@ -188,15 +188,15 @@ RUN <<EOF
     . /opt/axis/acapsdk/environment-setup*
     if [ -n "$DEBUG" ]; then
         printf "Building debug\n"
-        CXXFLAGS="$CXXFLAGS -O0 -ggdb $EXTRA_FLAGS" \
+        CXXFLAGS="$CXXFLAGS -O0 -ggdb "$EXTRA_FLAGS"" \
         acap-build . -m $MANIFEST
     elif [ -n "$TEST" ]; then
         printf "Building test\n"
-        CXXFLAGS="$CXXFLAGS -g0 $EXTRA_FLAGS -DTEST" \
+        CXXFLAGS="$CXXFLAGS -g0 "$EXTRA_FLAGS" -DTEST" \
         acap-build . -m manifest-test.json -a 'testdata/*'
     else
         printf "Building app\n"
-        CXXFLAGS="$CXXFLAGS -g0 $EXTRA_FLAGS" \
+        CXXFLAGS="$CXXFLAGS -g0 "$EXTRA_FLAGS"" \
         acap-build . -m $MANIFEST
     fi
 EOF
@@ -213,6 +213,7 @@ ENTRYPOINT [ "/opt/axis/acapsdk/sysroots/x86_64-pokysdk-linux/usr/bin/eap-instal
 
 # Copy out eap to a containerized image
 # Use this to run ACAP Runtime in a container on a device
+# hadolint ignore=DL3006
 FROM containerized_${ARCH} AS containerized
 
 WORKDIR /opt/app/
@@ -225,3 +226,7 @@ RUN <<EOF
 EOF
 
 ENTRYPOINT [ "/opt/app/acap_runtime/acapruntime" ]
+
+FROM scratch AS binaries
+
+COPY --from=runtime-base /opt/app/*.eap /
