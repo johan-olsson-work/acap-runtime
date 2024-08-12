@@ -264,7 +264,7 @@ jobs:
           echo "SIGNED_EAP_FILE=${signed_output}" >> $GITHUB_ENV
       - name: Sign eap-file
         run: |
-          cd .build
+          cd build
           RESPONSE=$(curl -XPOST -H 'accept: */*' -H 'Content-Type: multipart/form-data' \
           -H 'Authorization: Bearer ${{secrets.ACAP_PORTAL_SIGNING_BEARER_TOKEN}}' \
           '${{ vars.ACAP_PORTAL_URL }}/${{secrets.ACAP_PORTAL_SIGNING_ID}}/sign/binary' \
@@ -287,7 +287,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.SIGNED_EAP_FILE }}
-          path: .build/${{ env.SIGNED_EAP_FILE }}
+          path: build/${{ env.SIGNED_EAP_FILE }}
           if-no-files-found: error
       - name: Save file name
         id: save_full_file_name
