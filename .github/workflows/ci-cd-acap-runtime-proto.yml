@@ -3,12 +3,12 @@
 name: Proto Build Workflow
 
 on:
-  push:
-    branches:
-      - "add-new-workflow"  # Adjust this to match your branch name
-  pull_request:
-    branches:
-      - "add-new-workflow"  # Adjust this to match your branch name
+#  push:
+#    branches:
+#      - "add-new-workflow"  # Adjust this to match your branch name
+#  pull_request:
+#    branches:
+#      - "add-new-workflow"  # Adjust this to match your branch name
   workflow_dispatch:  # This allows manual triggering
 
 jobs:
