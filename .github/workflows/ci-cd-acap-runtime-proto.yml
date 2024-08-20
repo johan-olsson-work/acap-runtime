@@ -32,16 +32,17 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action
 
       - name: Build Proto image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action
         with:
           context: .
           file: ./Dockerfile.proto
           push: false
           load: true
           tags: axisecp/acap-runtime:protofiles
+          platforms: linux/arm64
 
       - name: List Docker images
         run: docker images
