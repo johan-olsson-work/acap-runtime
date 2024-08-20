@@ -33,6 +33,7 @@ If you are new to the world of ACAPs take a moment to check out
 - [Building ACAP Runtime](#building-acap-runtime)
   - [Native ACAP application](#native-acap-application-2)
   - [Containerized version](#containerized-version-2)
+- [Building protofiles for Python](#building-protofiles-for-python)
 - [Test suite](#test-suite)
 - [Contributing](#contributing)
 - [License](#license)
@@ -370,7 +371,15 @@ To build the containerized version run:
 docker buildx build --file Dockerfile --build-arg ARCH=<ARCH> --tag acap-runtime:<ARCH>-containerized .
 ```
 
-where `<ARCH>` is either `armv7hf` or `aarch64`.
+## Building protofiles for Python
+
+The repository includes a Dockerfile (`Dockerfile.proto`) for building the APIs protofiles for Python. The Dockerfile generates the necessary Python files from the protobuf definitions, allowing gRPC communication with the ACAP Runtime service, without the need to build the protofiles in your application.
+
+To build the protofiles:
+
+```sh
+docker build -f Dockerfile.proto -t acap-runtime-proto:latest .
+```
 
 ## Test suite
 

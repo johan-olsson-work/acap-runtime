@@ -1,1 +1,58 @@
+# yamllint disable rule:line-length
+---
+name: Proto Build Workflow
 
+on:
+#  push:
+#    branches:
+#      - "add-new-workflow"  # Adjust this to match your branch name
+#  pull_request:
+#    branches:
+#      - "add-new-workflow"  # Adjust this to match your branch name
+  workflow_dispatch:  # This allows manual triggering
+
+jobs:
+  build_proto:
+    name: Build Proto Image
+    runs-on: self-hosted  # Use the self-hosted runner
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Proto image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.proto
+          push: false
+          load: true
+          tags: proto-image:latest
+
+      # Optional: Print Docker images for verification
+      - name: List Docker images
+        run: docker images
+
+      # Uncomment and modify the following steps as needed
+
+      # - name: Save Proto image
+      #   run: |
+      #     docker save proto-image:latest > proto-image.tar
+
+      # - name: Upload Proto image artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: proto-image
+      #     path: proto-image.tar
+
+      # - name: Run tests on Proto image
+      #   run: |
+      #     # Add your test commands here
+
+      # - name: Clean up
+      #   if: always()
+      #   run: |
+      #     docker image prune -af
