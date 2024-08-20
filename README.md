@@ -93,12 +93,12 @@ The ACAP Runtime service provides the following APIs:
 
 - Machine learning API - An implementation of [TensorFlow Serving][tensorflow]. There
   are usage examples available for the Machine learning API written in
-  [Python][minimal-ml-inference] and [C++][object-detector-cpp].
+  [Python][minimal-ml-inference].
 - Parameter API - Provides gRPC read access to the parameters of an Axis device.
   There are usage examples available for the Parameter API written in
-  [Python][parameter-api-python] and [C++][paramter-api-cpp].
-- Video capture API - Enables capture of images from a camera. No usage examples
-  for this API exist yet.
+  [Python][parameter-api-python].
+- Video capture API - Enables capture of images from a camera.
+  No usage examples for this API exist yet.
 
 ## Installation and usage
 
@@ -110,7 +110,7 @@ The native ACAP Runtime application is available as a **signed** eap-file in [Re
 
 The prebuilt native ACAP Runtime application is signed, read more about signing [here][signing-documentation].
 
-The recomended way of installing and use ACAP Runtime is to download the signed eap-file from [prereleases or releases][all-releases] with a tag on the form `<version>_<ARCH>`, where `<version>` is the acap-runtime release
+The recommended way of installing and using ACAP Runtime is to download the signed eap-file from [prereleases or releases][all-releases] with a tag on the form `<version>_<ARCH>`, where `<version>` is the acap-runtime release
 version and `<ARCH>` is either `armv7hf` or `aarch64` depending on device architecture.
 E.g. `ACAP_Runtime_1_2_2_armv7hf_signed.eap`.
 The eap-file can be installed as an ACAP application on the device,
@@ -157,7 +157,7 @@ Pre-built containerized images are available on
 To include the containerized ACAP Runtime server in a project, add the image in
 the projects `docker-compose.yml` file. The following is an illustrative
 example of how the service can be set up with docker-compose. Here we use the
-image for `armv7hf`architecture. For a complete description
+image for `armv7hf` architecture. For a complete description
 see one of the working project [examples](#examples).
 
 ```yml
@@ -244,7 +244,7 @@ be given. See [Chip id](#chip-id) for more information.
 
 **(4)** If an instance of ACAP Runtime as an ACAP application is installed on the
 device, the device parameters are also available. Setting the `-o` flag will
-then override the -v, -p, -j and -c and -k settings, if the the corresponding
+then override the -v, -p, -j and -c and -k settings, if the corresponding
 device parameter value is valid. This setting is mainly aimed at debug/test
 usage and should not be used in production.
 
@@ -252,7 +252,7 @@ usage and should not be used in production.
 
 The Machine learning API uses the [Machine learning API][acap-documentation-native-ml] for image processing
 and to set it up the correct chip id for the device needs to be selected.
-Note that there is no direct corelation between chip id and architecture.
+Note that there is no direct correlation between chip id and architecture.
 For convenience the pre-built images for the ACAP Runtime native application sets
 the default value for ChipId to 4 for `armv7hf` and 12 for `aarch64`, since those
 are currently the most common ids for the respective architectures.
@@ -331,69 +331,44 @@ ACAP application or the `-a` and `-p` settings for the containerized version.
 
 ### Examples
 
-The following examples use the Parameter API with ACAP Runtime as a native
+The following example use the Parameter API with ACAP Runtime as a native
 ACAP application:
 
-- [parameter-api-cpp][paramter-api-cpp]
 - [parameter-api-python][parameter-api-python]
 
-The following examples use the ACAP Runtime containerized version to use the
+The following example use the ACAP Runtime containerized version to use the
 Machine learning API service:
 
 - [minimal-ml-inference][minimal-ml-inference]
-- [object-detector-cpp][object-detector-cpp]
 
 ## Building ACAP Runtime
 
-This repo provides Dockerfiles to be used to build ACAP Runtime. Note that Buildx is used.
+Docker is used to build ACAP Runtime by using the provided Dockerfile. Note that Buildx is used.
 
 <!-- markdownlint-disable MD024 -->
 ### Native ACAP application
 <!-- markdownlint-enable MD024 -->
 
-To build as a native ACAP application use either the Dockerfile `Dockerfile.armv7hf` or `Dockerfile.aarch64`. Select the one that matches the architecture of your device:
+To build and extract the native ACAP application run:
 
 ```sh
 # Build ACAP Runtime image
-docker buildx build --file Dockerfile.<ARCH> --tag acap-runtime:<ARCH> --target runtime-base .
+docker buildx build --file Dockerfile --build-arg ARCH=<ARCH> --target runtime-base --output <build-folder> .
 ```
 
-where `<ARCH>` is either `armv7hf` or `aarch64`.
+where `<ARCH>` is either `armv7hf` or `aarch64` and <build-folder> is the path to an output folder on your machine, eg. build. This will be created for you if not already existing. Once the build has completed the EAP file can be found in the <build-folder>.
 
-The build is based on [axisecp/acap-native-sdk][docker-hub-acap-native-sdk]. To
-base it on a different version than what is on main branch you can provide the
-build arguments `VERSION` and `UBUNTU_VERSION` to select a specific tag of the
-`acap-native-sdk` image. E.g. to use
-[axisecp/acap-native-sdk:1.4_beta1-armv7hf-ubuntu22.04][docker-hub-acap-native-sdk-1.4_beta1-armv7hf-ubuntu22.04]:
-
-```sh
-docker buildx build --file Dockerfile.<ARCH> --tag acap-runtime:<ARCH> --build-arg VERSION=1.4beta1 --build-arg UBUNTU_VERSION=22.04 .
-```
-
-Once the application is installed it can then be started either in the device GUI **Apps** tab or by running:
-
-```sh
-docker run --rm axisecp/acap-runtime:<version>-<ARCH> <device IP> <device password> start
-```
-
-Where `<device IP>` is the IP address of the device and `<device password>` is the password for the root user.
-
-The application can be stopped and uninstalled by using the device GUI, or by running:
-
-```sh
-docker run --rm axisecp/acap-runtime:<version>-<ARCH> <device IP> <device password> stop
-docker run --rm axisecp/acap-runtime:<version>-<ARCH> <device IP> <device password> remove
-```
+Once the application is installed it can then be started in the device GUI **Apps** tab.
 
 <!-- markdownlint-disable MD024 -->
 ### Containerized version
 <!-- markdownlint-enable MD024 -->
 
-To build the containerized version, use either the Dockerfile `Dockerfile.armv7hf` or `Dockerfile.aarch64`. Select the one that matches the architecture of your device:
+To build the containerized version run:
 
 ```sh
 # Build ACAP Runtime containerized version
-docker buildx build --file Dockerfile.<ARCH> --tag acap-runtime:<ARCH>-containerized .
+docker buildx build --file Dockerfile --build-arg ARCH=<ARCH> --tag acap-runtime:<ARCH>-containerized .
 ```
 
 ## Building protofiles for Python
@@ -416,7 +391,7 @@ Build and install it by running:
 
 ```sh
 # Build ACAP Runtime test suite image
-docker buildx build --file Dockerfile.<ARCH> --tag acap-runtime:<ARCH>-test --build-arg TEST=yes --target runtime-base .
+docker buildx build --file Dockerfile --build-arg ARCH=<ARCH> --build-arg TEST=yes --tag acap-runtime:<ARCH>-test  --target runtime-base .
 
 docker run --rm acap-runtime:<ARCH>-test <device IP> <device password> install
 ```
@@ -461,17 +436,13 @@ Take a look at the [CONTRIBUTING.md](CONTRIBUTING.md) file.
 [devices]: https://axiscommunications.github.io/acap-documentation/docs/axis-devices-and-compatibility#sdk-and-device-compatibility
 [docker-acap]: https://github.com/AxisCommunications/docker-acap
 [docker-hub-acap-runtime]: https://hub.docker.com/r/axisecp/acap-runtime
-[docker-hub-acap-native-sdk]: https://hub.docker.com/repository/docker/axisecp/acap-native-sdk
-[docker-hub-acap-native-sdk-1.4_beta1-armv7hf-ubuntu22.04]: https://hub.docker.com/layers/axisecp/acap-native-sdk/1.4_beta1-armv7hf-ubuntu22.04/images/sha256-07ed766f7a68033a2717b1334c8fdee29b1a55386b37d67924e5401c91ed9ecd?context=repo
 [dockerDesktop]: https://docs.docker.com/desktop/
 [dockerEngine]: https://docs.docker.com/engine/
 [gRPC]: https://grpc.io/
 [latest-releases]: https://github.com/AxisCommunications/acap-runtime/releases/latest
 [minimal-ml-inference]: https://github.com/AxisCommunications/acap-computer-vision-sdk-examples/tree/main/minimal-ml-inference
-[object-detector-cpp]: https://github.com/AxisCommunications/acap-computer-vision-sdk-examples/tree/main/object-detector-cpp
 [openssl-req]: https://www.openssl.org/docs/man3.0/man1/openssl-req.html
 [parameter-api-python]: https://github.com/AxisCommunications/acap-computer-vision-sdk-examples/tree/main/parameter-api-python
-[paramter-api-cpp]: https://github.com/AxisCommunications/acap-computer-vision-sdk-examples/tree/main/parameter-api-cpp
 [signing-documentation]: https://axiscommunications.github.io/acap-documentation/docs/faq/security.html#sign-acap-applications
 [tensorflow]: https://github.com/tensorflow/serving
 
