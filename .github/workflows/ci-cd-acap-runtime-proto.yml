@@ -46,7 +46,7 @@ jobs:
       - name: List Docker images
         run: docker images
 
-- name: Extract proto files
+      - name: Extract proto files
         run: |
           container_id=$(docker create axisecp/acap-runtime:protofiles)
           docker cp $container_id:/build/param/proto_utils ./proto_utils_param
