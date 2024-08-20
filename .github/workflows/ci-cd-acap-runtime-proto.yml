@@ -37,8 +37,7 @@ jobs:
       - name: Build Proto image
         uses: ./.github/actions/docker-build-push-action
         with:
-          context: .
-          file: ./Dockerfile.proto
+          dockerfile: Dockerfile
           push: false
           load: true
           tags: axisecp/acap-runtime:protofiles
@@ -59,7 +58,8 @@ jobs:
           name: proto-files
           path: ./proto_utils
 
-      - name: Clean up
-        if: always()
-        run: |
-          docker image prune -af
+#      - name: Clean up
+#        if: always()
+#        run: |
+#          docker image prune -af
+#
