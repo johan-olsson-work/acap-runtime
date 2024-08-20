@@ -46,17 +46,22 @@ jobs:
       - name: List Docker images
         run: docker images
 
-      - name: Extract proto files
+- name: Extract proto files
         run: |
           container_id=$(docker create axisecp/acap-runtime:protofiles)
-          docker cp $container_id:/opt/app/proto_utils ./proto_utils
+          docker cp $container_id:/build/param/proto_utils ./proto_utils_param
+          docker cp $container_id:/build/vdo/proto_utils ./proto_utils_vdo
+          docker cp $container_id:/build/tf/proto_utils ./proto_utils_tf
           docker rm $container_id
 
-      - name: Upload proto files artifact
+      - name: Upload proto files artifacts
         uses: actions/upload-artifact@v4
         with:
           name: proto-files
-          path: ./proto_utils
+          path: |
+            ./proto_utils_param
+            ./proto_utils_vdo
+            ./proto_utils_tf
 
 #      - name: Clean up
 #        if: always()
