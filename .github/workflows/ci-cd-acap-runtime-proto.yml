@@ -31,11 +31,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action
-
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v3
+#
       - name: Build Proto image
-        uses: docker/build-push-action
+        uses: ./.github/actions/docker-build-push-action
         with:
           context: .
           file: ./Dockerfile.proto
