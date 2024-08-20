@@ -25,7 +25,7 @@ on:
 jobs:
   build_proto_image:
     name: Build Proto Image
-    runs-on: ubuntu-latest
+    runs-on: self-hosted #ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -42,7 +42,7 @@ jobs:
           push: false
           load: true
           tags: axisecp/acap-runtime:protofiles
-          platforms: linux/arm64
+#          platforms: linux/arm64
 
       - name: List Docker images
         run: docker images
