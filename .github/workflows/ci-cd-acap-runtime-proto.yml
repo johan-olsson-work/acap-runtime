@@ -37,7 +37,7 @@ jobs:
       - name: Build Proto image
         uses: ./.github/actions/docker-build-push-action
         with:
-          dockerfile: Dockerfile
+          dockerfile: ./Dockerfile.proto
           push: false
           load: true
           tags: axisecp/acap-runtime:protofiles
