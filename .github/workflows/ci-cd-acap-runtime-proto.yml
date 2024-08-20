@@ -41,25 +41,22 @@ jobs:
           file: ./Dockerfile.proto
           push: false
           load: true
-          tags: proto-image:latest
+          tags: axisecp/acap-runtime:protofiles
 
-      # Optional: Print Docker images for verification
       - name: List Docker images
         run: docker images
 
-      - name: Save Proto image
+      - name: Extract proto files
         run: |
-          docker save proto-image:latest > proto-image.tar
+          container_id=$(docker create axisecp/acap-runtime:protofiles)
+          docker cp $container_id:/opt/app/proto_utils ./proto_utils
+          docker rm $container_id
 
-      - name: Upload Proto image artifact
+      - name: Upload proto files artifact
         uses: actions/upload-artifact@v4
         with:
-          name: proto-image
-          path: proto-image.tar
-
-      # - name: Run tests on Proto image
-      #   run: |
-      #     # Add your test commands here
+          name: proto-files
+          path: ./proto_utils
 
       - name: Clean up
         if: always()
