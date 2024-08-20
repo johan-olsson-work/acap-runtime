@@ -5,11 +5,22 @@ name: Proto Build Workflow
 on:
 #  push:
 #    branches:
-#      - "add-new-workflow"  # Adjust this to match your branch name
+#      - "main"
+#    tags:
+#      # semver, e.g. 1.2.0 (does not match 0.1.2)
+#      - "[1-9]+.[0-9]+.[0-9]+"
+#      # semver with prerelease info, e.g. 1.0.2-beta.1 or 1.2.3-rc.10
+#      - "[1-9]+.[0-9]+.[0-9]+-[a-z]+.[0-9]+"
+#      # do not match prerelease starting w/ 0, e.g. 1.0.2-beta.0 or 1.2.3-rc.01
+#      - "![1-9]+.[0-9]+.[0-9]+-[a-z]+.[0]*"
+#      # semver with date info, e.g. 1.0.2-20221125
+#      - "[1-9]+.[0-9]+.[0-9]+-[0-9]+"
+#      # do not match date starting w/ 0, e.g. 1.0.2-01232023
+#      - "![1-9]+.[0-9]+.[0-9]+-[0]*"
 #  pull_request:
 #    branches:
-#      - "add-new-workflow"  # Adjust this to match your branch name
-  workflow_dispatch:  # This allows manual triggering
+#      - "main"
+  workflow_dispatch:
 
 jobs:
   build_proto:
@@ -40,23 +51,21 @@ jobs:
       - name: List Docker images
         run: docker images
 
-      # Uncomment and modify the following steps as needed
+      - name: Save Proto image
+        run: |
+          docker save proto-image:latest > proto-image.tar
 
-      # - name: Save Proto image
-      #   run: |
-      #     docker save proto-image:latest > proto-image.tar
-
-      # - name: Upload Proto image artifact
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: proto-image
-      #     path: proto-image.tar
+      - name: Upload Proto image artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: proto-image
+          path: proto-image.tar
 
       # - name: Run tests on Proto image
       #   run: |
       #     # Add your test commands here
 
-      # - name: Clean up
-      #   if: always()
-      #   run: |
-      #     docker image prune -af
+      - name: Clean up
+        if: always()
+        run: |
+          docker image prune -af
