@@ -31,16 +31,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create image metadata
+   - name: Create image metadata
         id: meta
-        uses: docker/metadata-action@v5
+        uses: ./.github/actions/metadata-action
         with:
-          images: axisecp/acap-runtime
-          tags: |
-            type=raw,value=protofiles
-            type=sha,prefix=protofiles-
-            type=ref,event=branch
-            type=ref,event=tag
+          repository: axisecp/acap-runtime
+          get_version: "true"
 
       - name: Build Proto image
         uses: ./.github/actions/docker-build-push-action
@@ -48,8 +44,7 @@ jobs:
           dockerfile: ./Dockerfile.proto
           push: false
           load: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: axisecp/acap-runtime:${{ steps.meta.outputs.version }}-protofiles
 
       - name: List Docker images
         run: docker images
@@ -105,14 +100,12 @@ jobs:
             ./proto_utils_tf
 
       - name: Push Proto image
-        if: success() # To ensure the push only happens if previous steps succeeded
+        if: success()
         uses: ./.github/actions/docker-build-push-action
         with:
           dockerfile: ./Dockerfile.proto
-          # push: true
-          push: false
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          push: true
+          tags: axisecp/acap-runtime:${{ steps.meta.outputs.version }}-protofiles
           registry_user: ${{ secrets.ECOSYSTEM_SERVICE_USER_DOCKER_HUB }}
           registry_token: ${{ secrets.ECOSYSTEM_ACCESS_TOKEN_DOCKER_HUB }}
 
