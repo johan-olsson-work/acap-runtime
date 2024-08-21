@@ -104,7 +104,7 @@ jobs:
         uses: ./.github/actions/docker-build-push-action
         with:
           dockerfile: ./Dockerfile.proto
-          push: true
+          push: false # true
           tags: axisecp/acap-runtime:${{ steps.meta.outputs.version }}-protofiles
           registry_user: ${{ secrets.ECOSYSTEM_SERVICE_USER_DOCKER_HUB }}
           registry_token: ${{ secrets.ECOSYSTEM_ACCESS_TOKEN_DOCKER_HUB }}
