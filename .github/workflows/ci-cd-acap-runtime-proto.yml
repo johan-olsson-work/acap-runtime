@@ -25,23 +25,31 @@ on:
 jobs:
   build_proto_image:
     name: Build Proto Image
-    runs-on: self-hosted #ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-#      - name: Set up Docker Buildx
-#        uses: docker/setup-buildx-action@v3
-#
+      - name: Create image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: axisecp/acap-runtime
+          tags: |
+            type=raw,value=protofiles
+            type=sha,prefix=protofiles-
+            type=ref,event=branch
+            type=ref,event=tag
+
       - name: Build Proto image
         uses: ./.github/actions/docker-build-push-action
         with:
           dockerfile: ./Dockerfile.proto
           push: false
           load: true
-          tags: axisecp/acap-runtime:protofiles
-#          platforms: linux/arm64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
       - name: List Docker images
         run: docker images
@@ -54,6 +62,39 @@ jobs:
           docker cp $container_id:/build/tf/proto_utils ./proto_utils_tf
           docker rm $container_id
 
+      - name: Verify proto files
+        run: |
+          echo "Verifying proto files..."
+
+          # Check param proto files
+          if [ "$(ls -A ./proto_utils_param)" ]; then
+            echo "param proto files found:"
+            ls -l ./proto_utils_param
+          else
+            echo "Error: param proto files are missing"
+            exit 1
+          fi
+
+          # Check vdo proto files
+          if [ "$(ls -A ./proto_utils_vdo)" ]; then
+            echo "vdo proto files found:"
+            ls -l ./proto_utils_vdo
+          else
+            echo "Error: vdo proto files are missing"
+            exit 1
+          fi
+
+          # Check tf proto files
+          if [ "$(ls -A ./proto_utils_tf)" ]; then
+            echo "tf proto files found:"
+            ls -l ./proto_utils_tf
+          else
+            echo "Error: tf proto files are missing"
+            exit 1
+          fi
+
+          echo "All proto files verified successfully"
+
       - name: Upload proto files artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -62,6 +103,19 @@ jobs:
             ./proto_utils_param
             ./proto_utils_vdo
             ./proto_utils_tf
+
+      - name: Push Proto image
+        if: success() # To ensure the push only happens if previous steps succeeded
+        uses: ./.github/actions/docker-build-push-action
+        with:
+          dockerfile: ./Dockerfile.proto
+          # push: true
+          push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          registry_user: ${{ secrets.ECOSYSTEM_SERVICE_USER_DOCKER_HUB }}
+          registry_token: ${{ secrets.ECOSYSTEM_ACCESS_TOKEN_DOCKER_HUB }}
+
 
 #      - name: Clean up
 #        if: always()
