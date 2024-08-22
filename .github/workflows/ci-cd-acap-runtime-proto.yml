@@ -131,8 +131,7 @@ jobs:
           registry_token: ${{ secrets.ECOSYSTEM_ACCESS_TOKEN_DOCKER_HUB }}
 
 
-#      - name: Clean up
-#        if: always()
-#        run: |
-#          docker image prune -af
-#
+      - name: Clean up
+        if: always()
+        run: |
+          docker image prune -af
