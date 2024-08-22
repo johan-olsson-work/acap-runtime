@@ -3,7 +3,7 @@ ARG UBUNTU_VERSION=22.04
 ARG TFSERVING_VERSION=2.9.0
 
 # Build image, genearates proto files
-FROM ubuntu:${UBUNTU_VERSION}  AS build-image
+FROM arm64v8/ubuntu:${UBUNTU_VERSION}  AS build-image
 
 ARG TFSERVING_VERSION
 

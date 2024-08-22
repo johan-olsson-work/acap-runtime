@@ -65,6 +65,7 @@ jobs:
           push: false
           load: true
           tags: axisecp/acap-runtime:${{ steps.meta.outputs.version }}-protofiles
+          use_qemu: true
           options: "--progress=plain --verbose"
 
       - name: List Docker images
