@@ -25,7 +25,7 @@ on:
 jobs:
   build_proto_image:
     name: Build Proto Image
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -37,6 +37,12 @@ jobs:
         with:
           repository: axisecp/acap-runtime
           get_version: "true"
+
+      - name: Check permissions
+        run: |
+          whoami
+          id
+          ls -l /var/lib/apt/lists/
 
       - name: Build Proto image
         uses: ./.github/actions/docker-build-push-action
