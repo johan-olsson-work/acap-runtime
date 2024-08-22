@@ -73,7 +73,7 @@ jobs:
 
       - name: Extract proto files
         run: |
-          container_id=$(docker create axisecp/acap-runtime:protofiles)
+          container_id=$(docker create axisecp/acap-runtime:${{ steps.meta.outputs.version }}-protofiles)
           docker cp $container_id:/build/param/proto_utils ./proto_utils_param
           docker cp $container_id:/build/vdo/proto_utils ./proto_utils_vdo
           docker cp $container_id:/build/tf/proto_utils ./proto_utils_tf
