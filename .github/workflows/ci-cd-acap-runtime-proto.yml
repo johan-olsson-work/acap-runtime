@@ -44,6 +44,20 @@ jobs:
           id
           ls -l /var/lib/apt/lists/
 
+      - name: Check system info
+        run: |
+          uname -a
+          arch
+
+      - name: List installed packages
+        run: |
+          dpkg -l
+
+      - name: Check Docker version
+        run: |
+          docker version
+          docker info
+
       - name: Build Proto image
         uses: ./.github/actions/docker-build-push-action
         with:
@@ -51,6 +65,7 @@ jobs:
           push: false
           load: true
           tags: axisecp/acap-runtime:${{ steps.meta.outputs.version }}-protofiles
+          options: "--progress=plain --verbose"
 
       - name: List Docker images
         run: docker images
