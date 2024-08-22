@@ -121,8 +121,7 @@ jobs:
             ./proto_utils_tf
 
       - name: Push Proto image
-        if: success()
-        if: (github.event_name != 'pull_request')
+        if: success() && github.event_name != 'pull_request'
         uses: ./.github/actions/docker-build-push-action
         with:
           dockerfile: ./Dockerfile.proto
