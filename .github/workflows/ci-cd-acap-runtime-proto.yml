@@ -66,6 +66,7 @@ jobs:
           load: true
           tags: axisecp/acap-runtime:${{ steps.meta.outputs.version }}-protofiles
           use_qemu: true
+          platform: linux/arm64
 
       - name: List Docker images
         run: docker images
